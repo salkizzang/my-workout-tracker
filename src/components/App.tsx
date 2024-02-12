@@ -100,6 +100,9 @@ function App() {
 
   const handleExerciseRecordSubmit = (data: any) => {
     console.log(data);
+    //저장 한 후 이벤트
+    setSelectedExercise(null);
+
   };
 
   const logOut = () => {
@@ -141,7 +144,8 @@ function App() {
 
   return (
     <>
-      {!session ? <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} /> :
+      {!session ? <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} providers={['google']}
+      /> :
         <div style={{ height: 'calc(100vh - 62px)' }}>
           <Navbar fluid rounded>
             <Navbar.Brand>
@@ -157,19 +161,19 @@ function App() {
                 onClick={() => setActiveTab(TABS.DATE_PICKER)}
               >
                 날짜 선택
-            </Navbar.Link>
+              </Navbar.Link>
               <Navbar.Link
                 active={activeTab === TABS.EXERCISE_INPUT}
                 onClick={() => setActiveTab(TABS.EXERCISE_INPUT)}
               >
                 운동 입력
-            </Navbar.Link>
+              </Navbar.Link>
               <Navbar.Link
                 active={activeTab === TABS.EXERCISE_RECORDS}
                 onClick={() => setActiveTab(TABS.EXERCISE_RECORDS)}
               >
                 운동 기록
-            </Navbar.Link>
+              </Navbar.Link>
             </Navbar.Collapse>
 
           </Navbar>

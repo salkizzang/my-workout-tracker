@@ -25,7 +25,15 @@ function ExerciseRecordForm({ selectedExercise, onRecordSubmit }: Props) {
   const [incrementAmount, setIncrementAmount] = useState(1);
   const [sets, setSets] = useState<Set[]>([{ weight: 0, reps: 0 }]);
   const addSet = () => {
-    setSets([...sets, { weight: 0, reps: 0 }]);
+    if (sets && sets.length > 0) {
+      const lastSet = sets[0];
+      setSets([{ weight: lastSet.weight, reps: lastSet.reps }, ...sets]);
+    } else {
+      setSets([{ weight: 0, reps: 0 }, ...sets]);
+    }
+  };
+  const removeSet = (indexToRemove: number) => {
+    setSets(sets.filter((_, index) => index !== indexToRemove));
   };
   const handleSubmit = async () => {
     if (selectedExercise) {
@@ -46,11 +54,11 @@ function ExerciseRecordForm({ selectedExercise, onRecordSubmit }: Props) {
             Date: date,
           }))
         );
-
         // 오류 처리
         if (error) {
           console.error('Error saving exercise record:', error);
         } else {
+          setSets([]);
           // 기록 저장 후 처리
           onRecordSubmit({ exercise: selectedExercise, sets });
         }
@@ -85,8 +93,8 @@ function ExerciseRecordForm({ selectedExercise, onRecordSubmit }: Props) {
   return (
     <div className="flex flex-col h-[70vh]">
       <div className="flex-grow overflow-y-auto">
-        <h3>{selectedExercise}</h3>
-        <div className="flex space-x-2 mb-4">
+        <h3 className="text-lg font-semibold">{selectedExercise}</h3>
+        <div className="flex flex-wrap justify-between items-center space-x-2 mb-4">
           {[1, 2.5, 5, 10, 20].map((amount) => (
             <button
               key={amount}
@@ -99,54 +107,64 @@ function ExerciseRecordForm({ selectedExercise, onRecordSubmit }: Props) {
         </div>
 
         {sets.map((set, index) => (
-          <div key={index} className="space-y-4">
-            <label className="block text-sm font-medium text-gray-700">세트 {index + 1}</label>
-            <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-2">
-              <div className="relative flex items-center">
-                <button
-                  type="button"
-                  onClick={() => decrementValue(index, 'weight')}
-                  className="bg-gray-100 hover:bg-gray-200 p-2 rounded-l-lg">
-                  -
+          <div key={index} className="flex flex-col space-y-2 md:space-y-0 md:flex-row justify-between items-center mb-4">
+            <div className="text-sm font-medium flex items-center">
+              세트 {index + 1}
+              <button
+                onClick={() => removeSet(index)}
+                className="ml-2 bg-red-500 text-white px-2 py-1.5 rounded-md text-sm"
+              >
+                x
               </button>
-                <input
-                  type="number"
-                  value={set.weight}
-                  onChange={(e) => handleInputChange(index, 'weight', e.target.value)}
-                  className="bg-gray-50 h-10 text-center border border-gray-300"
-                  placeholder="무게(kg)"
-                />
-                <button
-                  type="button"
-                  onClick={() => incrementValue(index, 'weight')}
-                  className="bg-gray-100 hover:bg-gray-200 p-2 rounded-r-lg">
-                  +
-              </button>
-              </div>
-              <span className="text-xs text-gray-500">무게(kg)</span>
-              <div className="relative flex items-center">
-                <button
-                  type="button"
-                  onClick={() => decrementValue(index, 'reps')}
-                  className="bg-gray-100 hover:bg-gray-200 p-2 rounded-l-lg">
-                  -
-              </button>
-                <input
-                  type="number"
-                  value={set.reps}
-                  onChange={(e) => handleInputChange(index, 'reps', e.target.value)}
-                  className="bg-gray-50 h-10 text-center border border-gray-300"
-                  placeholder="횟수"
-                />
-                <button
-                  type="button"
-                  onClick={() => incrementValue(index, 'reps')}
-                  className="bg-gray-100 hover:bg-gray-200 p-2 rounded-r-lg">
-                  +
-              </button>
-              </div>
-              <span className="text-xs text-gray-500">횟수</span>
             </div>
+
+            <div className="flex flex-nowrap items-center space-x-2">
+              <button
+                type="button"
+                onClick={() => decrementValue(index, 'weight')}
+                className="text-sm bg-gray-100 hover:bg-gray-200 px-2 py-1.5 rounded-l-md"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                value={set.weight}
+                onChange={(e) => handleInputChange(index, 'weight', e.target.value)}
+                className="w-14 text-sm text-center border border-gray-300 rounded-none"
+                placeholder="무게"
+              />
+              <button
+                type="button"
+                onClick={() => incrementValue(index, 'weight')}
+                className="text-sm bg-gray-100 hover:bg-gray-200 px-2 py-1.5 rounded-r-md"
+              >
+                +
+              </button>
+              <span className="text-sm text-gray-500">kg</span>
+              <button
+                type="button"
+                onClick={() => decrementValue(index, 'reps')}
+                className="text-sm bg-gray-100 hover:bg-gray-200 px-2 py-1.5 rounded-l-md"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                value={set.reps}
+                onChange={(e) => handleInputChange(index, 'reps', e.target.value)}
+                className="w-14 text-sm text-center border border-gray-300 rounded-none"
+                placeholder="횟수"
+              />
+              <button
+                type="button"
+                onClick={() => incrementValue(index, 'reps')}
+                className="text-sm bg-gray-100 hover:bg-gray-200 px-2 py-1.5 rounded-r-md"
+              >
+                +
+              </button>
+              <span className="text-sm text-gray-500">회</span>
+            </div>
+
           </div>
         ))}
       </div>
