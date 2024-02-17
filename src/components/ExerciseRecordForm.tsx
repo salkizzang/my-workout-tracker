@@ -107,9 +107,9 @@ function ExerciseRecordForm({ selectedExercise, onRecordSubmit }: Props) {
         </div>
 
         {sets.map((set, index) => (
-          <div key={index} className="flex flex-col space-y-2 md:space-y-0 md:flex-row justify-between items-center mb-4">
+          <div key={sets.length - index} className="flex flex-col space-y-2 md:space-y-0 md:flex-row justify-between items-center mb-4">
             <div className="text-sm font-medium flex items-center">
-              세트 {index + 1}
+              세트 {sets.length - index}
               <button
                 onClick={() => removeSet(index)}
                 className="ml-2 bg-red-500 text-white px-2 py-1.5 rounded-md text-sm"

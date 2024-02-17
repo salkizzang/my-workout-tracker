@@ -16,6 +16,9 @@ import { Button } from 'flowbite-react';
 import "./App.css";
 import { Navbar } from 'flowbite-react';
 import BreadCrumbExercise from './BreadCrumbExercise';
+import ToastBar from './common/ToastBar';
+import { useToast } from '@/hooks/useToast';
+import ToastContainer from './common/ToastContainer';
 
 
 const TABS = {
@@ -32,6 +35,7 @@ function App() {
   const [selectedExercise, setSelectedExercise] = useRecoilState(selectedExerciseState);
 
   const [session, setSession] = useState<Session | null>(null);
+  const { addToast } = useToast();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -102,6 +106,10 @@ function App() {
     console.log(data);
     //저장 한 후 이벤트
     setSelectedExercise(null);
+    addToast({
+      type: 'success',
+      message: '운동 저장 완료!',
+    });
 
   };
 
@@ -175,11 +183,9 @@ function App() {
                 운동 기록
               </Navbar.Link>
             </Navbar.Collapse>
-
           </Navbar>
-
-
           <div className="tab-content">{renderTabContent()}</div>
+          <ToastContainer />
         </div>
       }
     </>
